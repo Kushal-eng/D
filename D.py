@@ -76,21 +76,44 @@ elif menu == "AI-Based Diet Recommendations":
     calorie_intake = st.number_input("Enter your daily calorie intake:", min_value=500, step=100)
     diet_type = st.selectbox("Choose your diet type:", ["Balanced", "High-Protein", "Low-Carb", "Vegan"])
 
-    # AI Diet Suggestion
-    if st.button("Get Diet Plan"):
-        if bmi > 25:
-            st.warning("⚠️ You might need a weight-loss diet. Consider reducing calorie intake and increasing fiber & protein.")
-        elif calorie_intake < 1500:
-            st.warning("⚠️ Your calorie intake is low. Ensure you're getting enough nutrients.")
-        else:
-            st.success("✅ Your diet seems well-balanced. Keep maintaining a healthy lifestyle!")
+    diet_plan = {
+        "Balanced": {
+            "Breakfast": "Oatmeal with nuts and fruit (350 kcal)",
+            "Lunch": "Grilled chicken with quinoa and vegetables (600 kcal)",
+            "Dinner": "Salmon with roasted sweet potatoes and salad (500 kcal)"
+        },
+        "High-Protein": {
+            "Breakfast": "Scrambled eggs with whole-grain toast (400 kcal)",
+            "Lunch": "Grilled steak with brown rice and steamed veggies (650 kcal)",
+            "Dinner": "Lentil soup with grilled chicken (550 kcal)"
+        },
+        "Low-Carb": {
+            "Breakfast": "Avocado and eggs on spinach (300 kcal)",
+            "Lunch": "Grilled salmon with cauliflower rice (550 kcal)",
+            "Dinner": "Zucchini noodles with pesto and grilled chicken (500 kcal)"
+        },
+        "Vegan": {
+            "Breakfast": "Smoothie with almond milk, banana, and peanut butter (350 kcal)",
+            "Lunch": "Chickpea salad with quinoa and avocado (600 kcal)",
+            "Dinner": "Stir-fried tofu with vegetables and brown rice (500 kcal)"
+        }
+    }
 
-        st.write("🔹 **Recommended Foods:**")
-        if diet_type == "Balanced":
-            st.write("🥗 Include lean protein, whole grains, and vegetables.")
-        elif diet_type == "High-Protein":
-            st.write("🍗 Add chicken, fish, eggs, and legumes.")
-        elif diet_type == "Low-Carb":
-            st.write("🥑 Focus on healthy fats and proteins, and limit processed carbs.")
-        elif diet_type == "Vegan":
-            st.write("🌱 Eat plant-based proteins, nuts, seeds, and whole grains.")
+    if st.button("Get Diet Plan"):
+        st.success("✅ Here's your recommended diet plan!")
+        st.write(f"**Breakfast:** {diet_plan[diet_type]['Breakfast']}")
+        st.write(f"**Lunch:** {diet_plan[diet_type]['Lunch']}")
+        st.write(f"**Dinner:** {diet_plan[diet_type]['Dinner']}")
+
+        # Generate PDF
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        pdf.cell(200, 10, txt="Personalized Diet Plan", ln=True, align='C')
+        pdf.ln(10)
+        for meal, desc in diet_plan[diet_type].items():
+            pdf.cell(200, 10, txt=f"{meal}: {desc}", ln=True)
+        pdf.output("diet_plan.pdf")
+
+        with open("diet_plan.pdf", "rb") as file:
+            st.download_button(label="Download Diet Plan PDF", data=file, file_name="Diet_Plan.pdf", mime="application/pdf")
