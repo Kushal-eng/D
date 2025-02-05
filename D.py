@@ -14,7 +14,7 @@ def load_data():
 df = load_data()
 
 # Remove unnecessary columns
-columns_to_remove = ["Ethnicity", "Mental Health Condition", "Alcohol Consumption", "Alcohol Drinks/Week", "Hypertension"]
+columns_to_remove = ["Ethnicity", "Mental Health Condition", "Alcohol Consumption", "Alcohol Drinks/Week", "Hypertension","Sedentary Hours"]
 df = df.drop(columns=columns_to_remove)
 
 # Encode categorical variables
