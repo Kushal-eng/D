@@ -105,15 +105,4 @@ elif menu == "AI-Based Diet Recommendations":
         st.write(f"**Lunch:** {diet_plan[diet_type]['Lunch']}")
         st.write(f"**Dinner:** {diet_plan[diet_type]['Dinner']}")
 
-        # Generate PDF
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Personalized Diet Plan", ln=True, align='C')
-        pdf.ln(10)
-        for meal, desc in diet_plan[diet_type].items():
-            pdf.cell(200, 10, txt=f"{meal}: {desc}", ln=True)
-        pdf.output("diet_plan.pdf")
-
-        with open("diet_plan.pdf", "rb") as file:
-            st.download_button(label="Download Diet Plan PDF", data=file, file_name="Diet_Plan.pdf", mime="application/pdf")
+       
