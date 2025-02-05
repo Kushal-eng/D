@@ -67,23 +67,6 @@ if menu == "Diabetes Prediction":
         prediction = model.predict(user_df_scaled)[0]
         st.success(f"🩺 **Predicted Diabetes Type:** {prediction}")
 
-# --- 🏋️‍♂️ Workout Progress Tracker ---
-elif menu == "Workout Progress Tracker":
-    st.header("🏋️‍♂️ Track Your Workout Progress")
-
-    # User Inputs
-    weekly_workout_hours = st.number_input("Enter your total workout hours this week:", min_value=0.0, step=0.5)
-    sedentary_hours = st.number_input("Enter your daily sedentary hours:", min_value=0.0, step=0.5)
-
-    # Progress Assessment
-    if st.button("Track Progress"):
-        if weekly_workout_hours >= 5 and sedentary_hours < 6:
-            st.success("✅ Great job! Your activity level is excellent. Keep it up!")
-        elif weekly_workout_hours >= 3:
-            st.warning("⚠️ Good effort, but try to increase your activity.")
-        else:
-            st.error("🚨 You need to work out more! Reduce sedentary time for better health.")
-
 # --- 🍎 AI-Based Diet Recommendations ---
 elif menu == "AI-Based Diet Recommendations":
     st.header("🍎 Get AI-Powered Diet Recommendations")
