@@ -44,7 +44,7 @@ model.fit(X_train, y_train)
 st.title("🏥 Diabetes Predictor Dashboard")
 
 # Sidebar Navigation
-menu = st.sidebar.radio("Select an Option:", ["Diabetes Prediction", "Workout Progress Tracker", "AI-Based Diet Recommendations"])
+menu = st.sidebar.radio("Select an Option:", ["Diabetes Prediction", "AI-Based Diet Recommendations"])
 
 # --- 🩺 Diabetes Prediction ---
 if menu == "Diabetes Prediction":
