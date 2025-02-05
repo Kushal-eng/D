@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 # Load Dataset
 @st.cache_data
 def load_data():
-    df = pd.read_csv("C:\Users\kotra\Downloads\diabetes_data.csv") 
+    df = pd.read_csv("C://Users//kotra//Downloads//diabetes_data.csv") 
     return df
 
 df = load_data()
