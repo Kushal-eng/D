@@ -14,7 +14,7 @@ def load_data():
 df = load_data()
 
 # Remove unnecessary columns
-columns_to_remove = ["Ethnicity", "Mental Health Condition", "Alcohol Consumption", "Alcohol Drinks/Week", "Hypertension","Sedentary Hours"]
+columns_to_remove = ["Ethnicity", "Mental Health Condition", "Alcohol Consumption", "Alcohol Drinks/Week", "Hypertension", "Sedentary Hours"]
 df = df.drop(columns=columns_to_remove)
 
 # Encode categorical variables
@@ -41,14 +41,14 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 
 # Streamlit Dashboard
-st.title("🏥 Diabetes Predictor Dashboard")
+st.title("\U0001F3E5 Diabetes Predictor Dashboard")
 
 # Sidebar Navigation
 menu = st.sidebar.radio("Select an Option:", ["Diabetes Prediction", "Diet Recommendations"])
 
-# --- 🩺 Diabetes Prediction ---
+# --- \U0001FA7A Diabetes Prediction ---
 if menu == "Diabetes Prediction":
-    st.header("🔍 Predict Your Diabetes Type")
+    st.header("\U0001F50D Predict Your Diabetes Type")
 
     # User Input Form
     user_input = {}
@@ -57,6 +57,18 @@ if menu == "Diabetes Prediction":
             options = list(label_encoders[col].classes_)
             user_input[col] = st.selectbox(f"{col}", options)
             user_input[col] = label_encoders[col].transform([user_input[col]])[0]
+        elif col == "Processed Food" or col == "Fast Food Consumption":
+            user_input[col] = st.radio(f"{col} (More than 10 days: Yes, Less than 10 days: No)", ["Yes", "No"]) 
+            user_input[col] = 1 if user_input[col] == "Yes" else 0
+        elif col == "Fruit & Veg Intake":
+            user_input[col] = st.slider(f"{col} (Scale 1 to 10)", min_value=1, max_value=10, step=1)
+        elif col == "Genetic Risk Score":
+            user_input[col] = st.slider(f"{col} (1-3: Uncle/Aunt, 4-6: Parents/Grandparents)", min_value=1, max_value=6, step=1)
+        elif col == "Sugar Consumption":
+            user_input[col] = st.number_input(f"{col} (grams per day)", min_value=0, step=1)
+        elif col == "Gestational Diabetes":
+            user_input[col] = st.radio("Have you had gestational diabetes?", ["Yes", "No", "Not Applicable"])
+            user_input[col] = 1 if user_input[col] == "Yes" else (0 if user_input[col] == "No" else -1)
         else:
             user_input[col] = st.number_input(f"{col}", min_value=0.0, step=0.1)
 
@@ -65,11 +77,11 @@ if menu == "Diabetes Prediction":
         user_df = pd.DataFrame([user_input])
         user_df_scaled = scaler.transform(user_df)
         prediction = model.predict(user_df_scaled)[0]
-        st.success(f"🩺 **Predicted Diabetes Type:** {prediction}")
+        st.success(f"\U0001FA7A **Predicted Diabetes Type:** {prediction}")
 
-# --- 🍎 AI-Based Diet Recommendations ---
-elif menu == "AI-Based Diet Recommendations":
-    st.header("🍎 Get AI-Powered Diet Recommendations")
+# --- \U0001F34E AI-Based Diet Recommendations ---
+elif menu == "Diet Recommendations":
+    st.header("\U0001F34E Get AI-Powered Diet Recommendations")
 
     # User Inputs
     bmi = st.number_input("Enter your BMI:", min_value=10.0, step=0.1)
@@ -104,5 +116,3 @@ elif menu == "AI-Based Diet Recommendations":
         st.write(f"**Breakfast:** {diet_plan[diet_type]['Breakfast']}")
         st.write(f"**Lunch:** {diet_plan[diet_type]['Lunch']}")
         st.write(f"**Dinner:** {diet_plan[diet_type]['Dinner']}")
-
-       
