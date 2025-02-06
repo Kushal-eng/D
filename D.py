@@ -123,7 +123,7 @@ if menu == "Diabetes Prediction":
     st.header("🔍 Predict Your Diabetes Type")
     user_input = {}
 
-    # Existing inputs (Removed the new features)
+    # Existing inputs (Removed new features)
     for col in X.columns:
         if col in label_encoders and col not in ["Processed_Food_Fast_Food", "Fruit_Veg_Intake", "Genetic_Risk_Score", "Sugar_Consumption", "Gestational_Diabetes"]:
             options = list(label_encoders[col].classes_)
