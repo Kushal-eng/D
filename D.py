@@ -123,16 +123,18 @@ if menu == "Diabetes Prediction":
     st.header("🔍 Predict Your Diabetes Type")
     user_input = {}
 
-    # Existing inputs
+    # Existing inputs (Removed the new features)
     for col in X.columns:
-        if col in label_encoders:
+        if col in label_encoders and col not in ["Processed_Food_Fast_Food", "Fruit_Veg_Intake", "Genetic_Risk_Score", "Sugar_Consumption", "Gestational_Diabetes"]:
             options = list(label_encoders[col].classes_)
             user_input[col] = st.selectbox(f"{col}", options)
             user_input[col] = label_encoders[col].transform([user_input[col]])[0]
         else:
             user_input[col] = st.number_input(f"{col}", min_value=0.0, step=0.1)
 
-    # New Features
+    # New Features (Moved from previous section)
+    st.subheader("New Features")
+    
     # 1. Processed Food, Fast Food Consumption
     processed_food = st.selectbox("Processed Food, Fast Food Consumption (More than 10 days = Yes, Less than 10 days = No)", ["Yes", "No"])
     user_input["Processed_Food_Fast_Food"] = 1 if processed_food == "Yes" else 0
