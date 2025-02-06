@@ -38,7 +38,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Scale numerical features
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test
+X_test = scaler.transform(X_test)
 
 # Train Decision Tree Model
 st.sidebar.header("🔍 Decision Tree Model")
