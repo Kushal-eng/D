@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.tree import _tree
 
 # Load Dataset
 @st.cache_data
@@ -39,6 +40,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
+
+# Train Random Forest Model
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
 
 # Train Decision Tree Model
 st.sidebar.header("🔍 Decision Tree Model")
@@ -72,6 +77,23 @@ if selected_features:
     plt.figure(figsize=(8, 5))
     sns.barplot(x="Importance", y="Feature", data=feature_importance, palette="viridis")
     plt.title("Feature Importance in Decision Tree")
+    st.pyplot(plt)
+    
+    # Information Gain Calculation
+    def compute_information_gain(tree, feature_names):
+        ig_scores = []
+        for i, feature in enumerate(feature_names):
+            ig = tree.feature_importances_[i]
+            ig_scores.append((feature, ig))
+        return sorted(ig_scores, key=lambda x: x[1], reverse=True)
+    
+    info_gain = compute_information_gain(dt_model, selected_features)
+    info_gain_df = pd.DataFrame(info_gain, columns=["Feature", "Information Gain"])
+    
+    st.subheader("📈 Information Gain")
+    plt.figure(figsize=(8, 5))
+    sns.barplot(x="Information Gain", y="Feature", data=info_gain_df, palette="coolwarm")
+    plt.title("Information Gain for Features")
     st.pyplot(plt)
 
 # Streamlit Dashboard
