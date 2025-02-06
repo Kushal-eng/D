@@ -123,7 +123,7 @@ if menu == "Diabetes Prediction":
     st.header("🔍 Predict Your Diabetes Type")
     user_input = {}
 
-    # Existing inputs (Removed new features)
+    # Existing inputs (Added comments next to the features for clarification)
     for col in X.columns:
         if col in label_encoders and col not in ["Processed_Food_Fast_Food", "Fruit_Veg_Intake", "Genetic_Risk_Score", "Sugar_Consumption", "Gestational_Diabetes"]:
             options = list(label_encoders[col].classes_)
@@ -135,16 +135,16 @@ if menu == "Diabetes Prediction":
     # New Features (Moved from previous section)
     st.subheader("New Features")
     
-    # 1. Processed Food, Fast Food Consumption
+    # 1. Processed Food, Fast Food Consumption (More than 10 days = Yes, Less than 10 days = No)
     processed_food = st.selectbox("Processed Food, Fast Food Consumption (More than 10 days = Yes, Less than 10 days = No)", ["Yes", "No"])
     user_input["Processed_Food_Fast_Food"] = 1 if processed_food == "Yes" else 0
 
-    # 2. Fruit & Veg Intake (Scale input)
-    fruit_veg_intake = st.slider("Fruit & Veg Intake (Scale from 1 to 10, where 1 is Low and 10 is High)", 1, 10)
+    # 2. Fruit & Veg Intake (Scale input: Scale from 1 to 10, where 1 is Low and 10 is High)
+    fruit_veg_intake = st.slider("Fruit & Veg Intake", 1, 10)
     user_input["Fruit_Veg_Intake"] = fruit_veg_intake
 
-    # 3. Genetic Risk Score
-    genetic_risk = st.selectbox("Genetic Risk Score (1 to 3 = Uncles/Aunts, 4 to 6 = Parents/Grandparents)", [1, 2, 3, 4, 5, 6])
+    # 3. Genetic Risk Score (1 to 3 = Uncles/Aunts, 4 to 6 = Parents/Grandparents)
+    genetic_risk = st.selectbox("Genetic Risk Score", [1, 2, 3, 4, 5, 6])
     user_input["Genetic_Risk_Score"] = genetic_risk
 
     # 4. Sugar Consumption (in grams)
@@ -152,7 +152,7 @@ if menu == "Diabetes Prediction":
     user_input["Sugar_Consumption"] = sugar_consumption
 
     # 5. Gestational Diabetes (Yes/No)
-    gestational_diabetes = st.selectbox("Gestational Diabetes (Yes or No)", ["Yes", "No"])
+    gestational_diabetes = st.selectbox("Gestational Diabetes", ["Yes", "No"])
     user_input["Gestational_Diabetes"] = 1 if gestational_diabetes == "Yes" else 0
     
     # When the user presses the button to predict
