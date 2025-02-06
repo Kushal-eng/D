@@ -122,6 +122,8 @@ menu = st.sidebar.radio("Select an Option:", ["Diabetes Prediction", "Diet Recom
 if menu == "Diabetes Prediction":
     st.header("🔍 Predict Your Diabetes Type")
     user_input = {}
+
+    # Existing inputs
     for col in X.columns:
         if col in label_encoders:
             options = list(label_encoders[col].classes_)
@@ -129,7 +131,29 @@ if menu == "Diabetes Prediction":
             user_input[col] = label_encoders[col].transform([user_input[col]])[0]
         else:
             user_input[col] = st.number_input(f"{col}", min_value=0.0, step=0.1)
+
+    # New Features
+    # 1. Processed Food, Fast Food Consumption
+    processed_food = st.selectbox("Processed Food, Fast Food Consumption (More than 10 days = Yes, Less than 10 days = No)", ["Yes", "No"])
+    user_input["Processed_Food_Fast_Food"] = 1 if processed_food == "Yes" else 0
+
+    # 2. Fruit & Veg Intake (Scale input)
+    fruit_veg_intake = st.slider("Fruit & Veg Intake (Scale from 1 to 10, where 1 is Low and 10 is High)", 1, 10)
+    user_input["Fruit_Veg_Intake"] = fruit_veg_intake
+
+    # 3. Genetic Risk Score
+    genetic_risk = st.selectbox("Genetic Risk Score (1 to 3 = Uncles/Aunts, 4 to 6 = Parents/Grandparents)", [1, 2, 3, 4, 5, 6])
+    user_input["Genetic_Risk_Score"] = genetic_risk
+
+    # 4. Sugar Consumption (in grams)
+    sugar_consumption = st.number_input("Sugar Consumption (in grams)", min_value=0.0, step=1.0)
+    user_input["Sugar_Consumption"] = sugar_consumption
+
+    # 5. Gestational Diabetes (Yes/No)
+    gestational_diabetes = st.selectbox("Gestational Diabetes (Yes or No)", ["Yes", "No"])
+    user_input["Gestational_Diabetes"] = 1 if gestational_diabetes == "Yes" else 0
     
+    # When the user presses the button to predict
     if st.button("Predict"):
         user_df = pd.DataFrame([user_input])
         user_df_scaled = scaler.transform(user_df)
@@ -137,7 +161,7 @@ if menu == "Diabetes Prediction":
         st.success(f"🩺 **Predicted Diabetes Type:** {prediction}")
 
 elif menu == "Diet Recommendations":
-    st.header("🍏 Get AI-Powered Diet Recommendations")
+    st.header("🍏Diet Recommendations")
     bmi = st.number_input("Enter your BMI:", min_value=10.0, step=0.1)
     calorie_intake = st.number_input("Enter your daily calorie intake:", min_value=500, step=100)
     diet_type = st.selectbox("Choose your diet type:", ["Balanced", "High-Protein", "Low-Carb", "Vegan"])
