@@ -46,6 +46,55 @@ X_test = scaler.transform(X_test)
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train, y_train)
 
+# Train Random Forest Model
+st.sidebar.header("🔍 Random Forest Model")
+selected_features_rf = st.sidebar.multiselect("Select Features for Random Forest", X.columns.tolist(), default=X.columns.tolist())
+if selected_features_rf:
+    X_selected_rf = df[selected_features_rf]
+    X_train_rf, X_test_rf, y_train_rf, y_test_rf = train_test_split(X_selected_rf, y, test_size=0.2, random_state=42)
+    
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf_model.fit(X_train_rf, y_train_rf)
+    y_pred_rf = rf_model.predict(X_test_rf)
+    
+    # Performance Metrics
+    accuracy_rf = accuracy_score(y_test_rf, y_pred_rf)
+    precision_rf = precision_score(y_test_rf, y_pred_rf, average='weighted', zero_division=0)
+    recall_rf = recall_score(y_test_rf, y_pred_rf, average='weighted', zero_division=0)
+    
+    st.sidebar.subheader("📊 Random Forest Performance")
+    st.sidebar.write(f"*Accuracy:* {accuracy_rf:.2f}")
+    st.sidebar.write(f"*Precision:* {precision_rf:.2f}")
+    st.sidebar.write(f"*Recall:* {recall_rf:.2f}")
+    
+    # Feature Importance Visualization
+    st.subheader("💡 Feature Importance - Random Forest")
+    feature_importance_rf = pd.DataFrame({"Feature": selected_features_rf, "Importance": rf_model.feature_importances_}).sort_values(by="Importance", ascending=False)
+    plt.figure(figsize=(8, 5))
+    sns.barplot(x="Importance", y="Feature", data=feature_importance_rf, palette="viridis")
+    plt.title("Feature Importance in Random Forest")
+    st.pyplot(plt)
+
+    # Display Random Forest Model Insights
+    st.subheader("📌 Random Forest Insights")
+    st.write("""
+    The Random Forest model is a powerful ensemble learning method that aggregates predictions from multiple decision trees. 
+    By training on various subsets of the dataset and combining the results, it reduces overfitting compared to a single decision tree.
+    
+    **Advantages of Random Forest:**
+    - Handles high-dimensional datasets well.
+    - More robust to outliers.
+    - Reduces the risk of overfitting, especially with a larger number of trees.
+
+    **Performance Metrics:**
+    - **Accuracy:** Indicates how often the model correctly predicts the diabetes type.
+    - **Precision:** The proportion of positive predictions that are actually correct (Type 1, Type 2, or Pre-diabetes).
+    - **Recall:** The proportion of actual positive cases that the model successfully identifies.
+
+    **Feature Importance:**
+    - The model highlights which features (like BMI, Calorie Intake, or Exercise Hours) are most influential in predicting the diabetes type.
+    """)
+
 # Function to compute entropy
 def calculate_entropy(y):
     _, counts = np.unique(y, return_counts=True)
