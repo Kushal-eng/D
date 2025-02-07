@@ -1,3 +1,4 @@
+# Import necessary libraries
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -79,38 +80,34 @@ info_gain_df = pd.DataFrame(list(info_gain_values.items()), columns=["Feature", 
 info_gain_df = info_gain_df.sort_values(by="Information Gain", ascending=False)
 st.write(info_gain_df)  # Display as table
 
-# Train Decision Tree Model
-st.sidebar.header("🔍 Decision Tree Model")
-selected_features = st.sidebar.multiselect("Select Features for Decision Tree", X.columns.tolist(), default=X.columns.tolist())
+# Train Random Forest Model Insights
+st.sidebar.header("🔍 Random Forest Model")
+selected_features = st.sidebar.multiselect("Select Features for Random Forest", X.columns.tolist(), default=X.columns.tolist())
 if selected_features:
     X_selected = df[selected_features]
-    X_train_dt, X_test_dt, y_train_dt, y_test_dt = train_test_split(X_selected, y, test_size=0.2, random_state=42)
-    
-    dt_model = DecisionTreeClassifier(criterion='gini', max_depth=5, random_state=42)
-    dt_model.fit(X_train_dt, y_train_dt)
-    y_pred_dt = dt_model.predict(X_test_dt)
-    
+    X_train_rf, X_test_rf, y_train_rf, y_test_rf = train_test_split(X_selected, y, test_size=0.2, random_state=42)
+
+    # Initialize and train Random Forest model
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf_model.fit(X_train_rf, y_train_rf)
+
     # Performance Metrics
-    accuracy = accuracy_score(y_test_dt, y_pred_dt)
-    precision = precision_score(y_test_dt, y_pred_dt, average='weighted', zero_division=0)
-    recall = recall_score(y_test_dt, y_pred_dt, average='weighted', zero_division=0)
-    
-    st.sidebar.subheader("📊 Decision Tree Performance")
+    y_pred_rf = rf_model.predict(X_test_rf)
+    accuracy = accuracy_score(y_test_rf, y_pred_rf)
+    precision = precision_score(y_test_rf, y_pred_rf, average='weighted', zero_division=0)
+    recall = recall_score(y_test_rf, y_pred_rf, average='weighted', zero_division=0)
+
+    st.sidebar.subheader("📊 Random Forest Performance")
     st.sidebar.write(f"*Accuracy:* {accuracy:.2f}")
     st.sidebar.write(f"*Precision:* {precision:.2f}")
     st.sidebar.write(f"*Recall:* {recall:.2f}")
     
-    st.subheader("📌 Decision Tree Visualization")
-    plt.figure(figsize=(12, 6))
-    plot_tree(dt_model, feature_names=selected_features, class_names=["Type 1", "Type 2", "Prediabetes"], filled=True)
-    st.pyplot(plt)
-    
-    # Feature Importance
-    st.subheader("💡 Feature Importance")
-    feature_importance = pd.DataFrame({"Feature": selected_features, "Importance": dt_model.feature_importances_}).sort_values(by="Importance", ascending=False)
+    # Display Feature Importance from Random Forest
+    st.subheader("💡 Feature Importance from Random Forest")
+    feature_importance_rf = pd.DataFrame({"Feature": selected_features, "Importance": rf_model.feature_importances_}).sort_values(by="Importance", ascending=False)
     plt.figure(figsize=(8, 5))
-    sns.barplot(x="Importance", y="Feature", data=feature_importance, palette="viridis")
-    plt.title("Feature Importance in Decision Tree")
+    sns.barplot(x="Importance", y="Feature", data=feature_importance_rf, palette="viridis")
+    plt.title("Feature Importance in Random Forest")
     st.pyplot(plt)
 
 # Streamlit Dashboard
@@ -144,7 +141,6 @@ if menu == "Diabetes Prediction":
         else:
             user_input[col] = st.number_input(f"{col}", min_value=0.0, step=0.1)
 
-    
     # Add new input features with specific formats:
     user_input["Processed Food Consumption"] = st.selectbox("Processed Food Consumption (More than 10 days - Yes, Less than 10 days - No)", ["Yes", "No"])
     user_input["Fast Food Consumption"] = st.selectbox("Fast Food Consumption (More than 10 days - Yes, Less than 10 days - No)", ["Yes", "No"])
