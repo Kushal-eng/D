@@ -125,7 +125,8 @@ ignore_columns = [
     "Fruit & Veg Intake", 
     "Genetic Risk Score", 
     "Sugar Consumption (grams)", 
-    "Gestational Diabetes"
+    "Gestational Diabetes",
+    "Processed Food"
 ]
 
 if menu == "Diabetes Prediction":
