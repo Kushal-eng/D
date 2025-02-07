@@ -119,16 +119,30 @@ st.title("🏥 Diabetes Predictor Dashboard")
 # Sidebar Navigation
 menu = st.sidebar.radio("Select an Option:", ["Diabetes Prediction", "Diet Recommendations"])
 
+ignore_columns = [
+    "Processed Food Consumption", 
+    "Fast Food Consumption", 
+    "Fruit & Veg Intake", 
+    "Genetic Risk Score", 
+    "Sugar Consumption (grams)", 
+    "Gestational Diabetes"
+]
+
 if menu == "Diabetes Prediction":
     st.header("🔍 Predict Your Diabetes Type")
     user_input = {}
+    
     for col in X.columns:
+        if col in ignore_columns:
+            continue  # Skip the columns in the ignore list
+        
         if col in label_encoders:
             options = list(label_encoders[col].classes_)
             user_input[col] = st.selectbox(f"{col}", options)
             user_input[col] = label_encoders[col].transform([user_input[col]])[0]
         else:
             user_input[col] = st.number_input(f"{col}", min_value=0.0, step=0.1)
+
     
     # Add new input features with specific formats:
     user_input["Processed Food Consumption"] = st.selectbox("Processed Food Consumption (More than 10 days - Yes, Less than 10 days - No)", ["Yes", "No"])
