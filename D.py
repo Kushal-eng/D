@@ -30,7 +30,7 @@ for col in df.select_dtypes(include=['object']).columns:
     label_encoders[col] = le
 
 # Define features and target
-X = df.drop(columns=["Diabetes Type"])  # Replace with actual target column name
+X = df.drop(columns=["Diabetes Type"])
 y = df["Diabetes Type"]
 
 # Train-Test Split
@@ -40,10 +40,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
-
-# Train Random Forest Model
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
-rf_model.fit(X_train, y_train)
 
 # Function to compute entropy
 def calculate_entropy(y):
@@ -56,7 +52,7 @@ def compute_information_gain(X, y):
     info_gain = {}
 
     for feature in X.columns:
-        threshold = X[feature].median()  # Using median as a splitting criterion
+        threshold = X[feature].median()
         left_split = y[X[feature] <= threshold]
         right_split = y[X[feature] > threshold]
 
@@ -66,7 +62,6 @@ def compute_information_gain(X, y):
         left_weight = len(left_split) / len(y)
         right_weight = len(right_split) / len(y)
 
-        # Compute Information Gain
         ig = parent_entropy - (left_weight * left_entropy + right_weight * right_entropy)
         info_gain[feature] = ig
 
@@ -77,7 +72,7 @@ st.subheader("🔍 Information Gain for Each Feature")
 info_gain_values = compute_information_gain(X, y)
 info_gain_df = pd.DataFrame(list(info_gain_values.items()), columns=["Feature", "Information Gain"])
 info_gain_df = info_gain_df.sort_values(by="Information Gain", ascending=False)
-st.write(info_gain_df)  # Display as table
+st.write(info_gain_df)
 
 # Train Decision Tree Model
 st.sidebar.header("🔍 Decision Tree Model")
@@ -111,6 +106,34 @@ if selected_features:
     plt.figure(figsize=(8, 5))
     sns.barplot(x="Importance", y="Feature", data=feature_importance, palette="viridis")
     plt.title("Feature Importance in Decision Tree")
+    st.pyplot(plt)
+
+# Train Random Forest Model
+st.sidebar.header("🔍 Random Forest Model")
+selected_features_rf = st.sidebar.multiselect("Select Features for Random Forest", X.columns.tolist(), default=X.columns.tolist())
+if selected_features_rf:
+    X_selected_rf = df[selected_features_rf]
+    X_train_rf, X_test_rf, y_train_rf, y_test_rf = train_test_split(X_selected_rf, y, test_size=0.2, random_state=42)
+    
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf_model.fit(X_train_rf, y_train_rf)
+    y_pred_rf = rf_model.predict(X_test_rf)
+    
+    # Performance Metrics
+    accuracy_rf = accuracy_score(y_test_rf, y_pred_rf)
+    precision_rf = precision_score(y_test_rf, y_pred_rf, average='weighted', zero_division=0)
+    recall_rf = recall_score(y_test_rf, y_pred_rf, average='weighted', zero_division=0)
+    
+    st.sidebar.subheader("📊 Random Forest Performance")
+    st.sidebar.write(f"*Accuracy:* {accuracy_rf:.2f}")
+    st.sidebar.write(f"*Precision:* {precision_rf:.2f}")
+    st.sidebar.write(f"*Recall:* {recall_rf:.2f}")
+    
+    st.subheader("💡 Feature Importance - Random Forest")
+    feature_importance_rf = pd.DataFrame({"Feature": selected_features_rf, "Importance": rf_model.feature_importances_}).sort_values(by="Importance", ascending=False)
+    plt.figure(figsize=(8, 5))
+    sns.barplot(x="Importance", y="Feature", data=feature_importance_rf, palette="viridis")
+    plt.title("Feature Importance in Random Forest")
     st.pyplot(plt)
 
 # Streamlit Dashboard
