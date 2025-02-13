@@ -42,41 +42,21 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Train Naïve Bayes Model with Additional Train-Test Split
+# Train Naïve Bayes Model
 st.sidebar.header("🔍 Naïve Bayes Classifier")
-
-# First train-test split (original)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
-# Additional train-test split for further validation
-X_train_nb, X_val_nb, y_train_nb, y_val_nb = train_test_split(X_train, y_train, test_size=0.2, random_state=42, stratify=y_train)
-
-# Train the Naïve Bayes Model
 nb_model = GaussianNB()
-nb_model.fit(X_train_nb, y_train_nb)
-y_pred_nb = nb_model.predict(X_val_nb)
+nb_model.fit(X_train, y_train)
+y_pred_nb = nb_model.predict(X_test)
 
-# Performance Metrics on Validation Set
-accuracy_nb = accuracy_score(y_val_nb, y_pred_nb)
-precision_nb = precision_score(y_val_nb, y_pred_nb, average='weighted', zero_division=0)
-recall_nb = recall_score(y_val_nb, y_pred_nb, average='weighted', zero_division=0)
+# Performance Metrics
+accuracy_nb = accuracy_score(y_test, y_pred_nb)
+precision_nb = precision_score(y_test, y_pred_nb, average='weighted', zero_division=0)
+recall_nb = recall_score(y_test, y_pred_nb, average='weighted', zero_division=0)
 
-st.sidebar.subheader("📊 Naïve Bayes Performance (Validation Set)")
+st.sidebar.subheader("📊 Naïve Bayes Performance")
 st.sidebar.write(f"*Accuracy:* {accuracy_nb:.2f}")
 st.sidebar.write(f"*Precision:* {precision_nb:.2f}")
 st.sidebar.write(f"*Recall:* {recall_nb:.2f}")
-
-# Final testing on original test set
-y_pred_test_nb = nb_model.predict(X_test)
-accuracy_test_nb = accuracy_score(y_test, y_pred_test_nb)
-precision_test_nb = precision_score(y_test, y_pred_test_nb, average='weighted', zero_division=0)
-recall_test_nb = recall_score(y_test, y_pred_test_nb, average='weighted', zero_division=0)
-
-st.sidebar.subheader("📊 Naïve Bayes Performance (Test Set)")
-st.sidebar.write(f"*Accuracy:* {accuracy_test_nb:.2f}")
-st.sidebar.write(f"*Precision:* {precision_test_nb:.2f}")
-st.sidebar.write(f"*Recall:* {recall_test_nb:.2f}")
-
 
 
 # Function to compute entropy
