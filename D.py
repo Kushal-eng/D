@@ -203,10 +203,20 @@ if menu == "Diabetes Prediction":
     user_input["Gestational Diabetes"] = st.selectbox("Gestational Diabetes (Yes/No)", ["Yes", "No"])
     
     if st.button("Predict"):
-        user_df = pd.DataFrame([user_input])
-        user_df_scaled = scaler.transform(user_df)
-        prediction = rf_model.predict(user_df_scaled)[0]
-        st.success(f"🩺 **Predicted Diabetes Type:** {prediction}")
+    user_df = pd.DataFrame([user_input])
+
+    # Ensure column order and missing columns are handled
+    for col in X.columns:
+        if col not in user_df.columns:
+            user_df[col] = 0  # Default missing features to 0
+
+    user_df = user_df[X.columns]  # Reorder columns to match training data
+
+    user_df_scaled = scaler.transform(user_df)  # Scale the input
+    prediction = rf_model.predict(user_df_scaled)[0]
+
+    diabetes_types = {0: "Type 1", 1: "Type 2", 2: "Prediabetes"}
+    st.success(f"🩺 **Predicted Diabetes Type:** {diabetes_types.get(prediction, 'Unknown')}")  # Map prediction to labels
 
 elif menu == "Diet Recommendations":
     st.header("🍏 Get AI-Powered Diet Recommendations")
