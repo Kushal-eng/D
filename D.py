@@ -202,7 +202,7 @@ if menu == "Diabetes Prediction":
     # For Gestational Diabetes, ask if the user has a history
     user_input["Gestational Diabetes"] = st.selectbox("Gestational Diabetes (Yes/No)", ["Yes", "No"])
     
-    if st.button("Predict"):
+if st.button("Predict"):
     # Convert user input into a DataFrame
     user_df = pd.DataFrame([user_input])
 
